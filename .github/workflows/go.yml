@@ -1,0 +1,20 @@
+name: Get Data 
+
+on:
+  schedule:
+    - cron: "0 1 * * *"
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+
+    - name: Get Data
+      run: go run ./cmd/get_data
