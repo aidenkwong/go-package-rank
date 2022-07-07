@@ -1,16 +1,24 @@
 package model
 
 import (
+	"log"
+	"os"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var (
 	db  *gorm.DB
-	dsn = "host=localhost user=postgres password=Highfive5+ dbname=go_package_rank port=5432 sslmode=disable"
+	dsn string
 )
 
 func init() {
+
+	dsn = os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		log.Fatal("DATABAASE_URL must be set")
+	}
 	d, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		// Logger: logger.Default.LogMode(logger.Info),
 	})

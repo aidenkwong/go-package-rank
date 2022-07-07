@@ -11,13 +11,17 @@ import (
 )
 
 func main() {
+
 	getLinksCollector := colly.NewCollector()
+
 	var stdPkgLinks []string
 
 	getLinksCollector.OnHTML("table", func(e *colly.HTMLElement) {
+
 		e.ForEach("tr > td:nth-child(1) > div > span > a", func(_ int, e *colly.HTMLElement) {
 			stdPkgLinks = append(stdPkgLinks, e.Attr("href"))
 		})
+
 		e.ForEach("tr > td:nth-child(1) > div > div > a", func(_ int, e *colly.HTMLElement) {
 			stdPkgLinks = append(stdPkgLinks, e.Attr("href"))
 		})
@@ -26,20 +30,21 @@ func main() {
 	getLinksCollector.Visit("https://pkg.go.dev/std")
 
 	fmt.Println(strconv.Itoa(len(stdPkgLinks)) + " packages found in std")
+
 	visitLinksCollector := colly.NewCollector()
 
 	var stdPkgs []model.StandardPackage
 
 	visitLinksCollector.OnHTML("body > main > header > div > div.go-Main-headerDetails > span:nth-child(5)", func(e *colly.HTMLElement) {
 
-		noi := strings.ReplaceAll(e.ChildText("a"), "Imported by: ", "")
-		numOfImports, err := strconv.Atoi(strings.ReplaceAll(noi, ",", ""))
+		ib := strings.ReplaceAll(e.ChildText("a"), "Imported by: ", "")
+		importedBy, err := strconv.Atoi(strings.ReplaceAll(ib, ",", ""))
 		if err != nil {
 			panic(err)
 		}
 		stdPkgs = append(stdPkgs, model.StandardPackage{
-			Name:         e.Request.URL.Path,
-			NumOfImports: numOfImports,
+			Name:       e.Request.URL.Path,
+			ImportedBy: importedBy,
 		})
 
 	})
@@ -54,7 +59,8 @@ func main() {
 	}
 	db := model.GetDB()
 	db.Clauses(clause.OnConflict{
-		UpdateAll: true,
+		Columns:   []clause.Column{{Name: "name"}},
+		DoUpdates: clause.AssignmentColumns([]string{"imported_by"}),
 	}).Create(&stdPkgs)
 
 }
