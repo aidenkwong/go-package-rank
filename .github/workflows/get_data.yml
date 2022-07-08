@@ -6,8 +6,7 @@ on:
   push:
      branches:
           - main
-env:
-    DATABASE_URL: ${{ env.DATABASE_URL }}
+
 jobs:
 
   build:
@@ -19,6 +18,8 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.18
+      env:
+        DATABASE_URL: ${{ env.DATABASE_URL }}
 
     - name: Get Data
       run: go run ./cmd/get_data
