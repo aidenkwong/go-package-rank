@@ -17,6 +17,7 @@ var (
 func init() {
 
 	for _, e := range os.Environ() {
+		log.Println(e)
 		pair := strings.SplitN(e, "=", 2)
 		if pair[0] == "DATABASE_URL" {
 			dsn = pair[1]
