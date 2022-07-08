@@ -76,7 +76,7 @@ func main() {
 				URL := "https://api.github.com/repos/" + str
 				fmt.Println("Requesting ", URL)
 				req, err := http.NewRequest("GET", URL, nil)
-				req.SetBasicAuth("aidenkwong", "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")
+				req.SetBasicAuth("aidenkwong", os.Getenv("GITHUB_TOKEN"))
 				resp, err := client.Do(req)
 				if err != nil {
 					log.Fatal(err)
