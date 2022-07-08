@@ -1,7 +1,4 @@
 name: Get Data 
-env:
-    DATABASE_URL: ${{ env.DATABASE_URL }}
-
 
 on:
   schedule:
@@ -9,7 +6,8 @@ on:
   push:
      branches:
           - main
-
+env:
+    DATABASE_URL: ${{ env.DATABASE_URL }}
 jobs:
 
   build:
