@@ -1,4 +1,7 @@
 name: Get Data 
+env:
+    DATABASE_URL: ${{ env.DATABASE_URL }}
+
 
 on:
   schedule:
