@@ -2,8 +2,6 @@ This repo has rank the Golang standard library "Import by" number and also the p
 
 ### Golang packages other than the standard library
 
-[]: # Language: markdown
-[]: # Path: README.md
 
 | Name                                               | ImportedBy | GitHubStar |
 | -------------------------------------------------- | ---------- | ---------- |
