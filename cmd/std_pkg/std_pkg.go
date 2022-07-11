@@ -1,14 +1,20 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
+	"sort"
 	"strconv"
 	"strings"
 
-	"github.com/aidenkwong/go-package-rank/pkg/model"
 	"github.com/gocolly/colly"
-	"gorm.io/gorm/clause"
 )
+
+type StandardPackage struct {
+	Name       string
+	ImportedBy int
+}
 
 func main() {
 
@@ -33,7 +39,7 @@ func main() {
 
 	visitLinksCollector := colly.NewCollector()
 
-	var stdPkgs []model.StandardPackage
+	var stdPkgs []StandardPackage
 
 	visitLinksCollector.OnHTML("body > main > header > div > div.go-Main-headerDetails > span:nth-child(5)", func(e *colly.HTMLElement) {
 
@@ -42,25 +48,34 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		stdPkgs = append(stdPkgs, model.StandardPackage{
+		stdPkgs = append(stdPkgs, StandardPackage{
 			Name:       e.Request.URL.Path,
 			ImportedBy: importedBy,
 		})
 
 	})
 
-	for _, link := range stdPkgLinks {
-
-		err := visitLinksCollector.Visit("https://pkg.go.dev" + link)
-		if err != nil {
-			fmt.Println(err)
-		}
+	maxGoroutines := 10
+	guard := make(chan struct{}, maxGoroutines)
+	for i, link := range stdPkgLinks {
+		guard <- struct{}{}
+		go func(i int, link string) {
+			println(i, " of ", len(stdPkgLinks), " ", link)
+			err := visitLinksCollector.Visit("https://pkg.go.dev" + link)
+			if err != nil {
+				fmt.Println(err)
+			}
+			<-guard
+		}(i, link)
 
 	}
-	db := model.GetDB()
-	db.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "name"}},
-		DoUpdates: clause.AssignmentColumns([]string{"imported_by"}),
-	}).Create(&stdPkgs)
+	sort.Slice(stdPkgs, func(i, j int) bool {
+		return stdPkgs[i].ImportedBy > stdPkgs[j].ImportedBy
+	})
+	stdPkgsJSON, err := json.Marshal(stdPkgs)
+	if err != nil {
+		println(err)
+	}
+	os.WriteFile("std_pkg.json", []byte(stdPkgsJSON), 0644)
 
 }

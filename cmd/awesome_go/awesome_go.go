@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -36,7 +35,7 @@ func GetStringInBetweenTwoString(str string, startS string, endS string) (result
 }
 
 func main() {
-	file, err := os.Open("awesomeGo.md")
+	file, err := os.Open("awesome_go.md")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -74,7 +73,6 @@ func main() {
 				str := strings.Replace(e.Request.URL.Path[1:], "github.com/", "", 1)
 				client := &http.Client{}
 				URL := "https://api.github.com/repos/" + str
-				fmt.Println("Requesting ", URL)
 				req, err := http.NewRequest("GET", URL, nil)
 				req.SetBasicAuth("aidenkwong", os.Getenv("GITHUB_TOKEN"))
 				resp, err := client.Do(req)
