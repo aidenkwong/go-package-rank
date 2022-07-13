@@ -35,6 +35,10 @@ func GetStringInBetweenTwoString(str string, startS string, endS string) (result
 }
 
 func main() {
+	GITHUB_TOKEN := os.Getenv("GITHUB_TOKEN")
+	if GITHUB_TOKEN == "" {
+		panic("GITHUB_TOKEN is empty")
+	}
 	file, err := os.Open("awesome_go.md")
 	if err != nil {
 		log.Fatal(err)
@@ -74,12 +78,14 @@ func main() {
 				client := &http.Client{}
 				URL := "https://api.github.com/repos/" + str
 				req, err := http.NewRequest("GET", URL, nil)
-				req.SetBasicAuth("aidenkwong", os.Getenv("GITHUB_TOKEN"))
+
+				req.SetBasicAuth("aidenkwong", GITHUB_TOKEN)
 				resp, err := client.Do(req)
 				if err != nil {
-					log.Fatal(err)
+					panic(err)
 				}
 				bodyText, err := ioutil.ReadAll(resp.Body)
+
 				var body map[string]interface{}
 				json.Unmarshal(bodyText, &body)
 				var githubStar float64
@@ -89,7 +95,9 @@ func main() {
 						//do whatever you want to handle errors - this means this wasn't a string
 					}
 				} else {
-					//handle error - the map didn't contain this key
+					// log.Println(URL)
+					// log.Println(string(bodyText))
+					// log.Fatal("watchers_count not found")
 				}
 				pkgs = append(pkgs, Package{
 					Name:       e.Request.URL.Path[1:],
