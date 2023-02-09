@@ -108,12 +108,22 @@ func main() {
 		}
 
 	})
-	maxGoroutines := 10
+	maxGoroutines := 5
 	guard := make(chan struct{}, maxGoroutines)
+
+	print("\033[s")
+	progress := 0
 	for i, link := range links {
+
 		guard <- struct{}{}
+
 		go func(i int, link string) {
-			println(i, " of ", totalNumOfLinks, " ", link)
+			print("\033[u\033[K")
+			curProgress := (i + 1) * 100 / totalNumOfLinks
+			if curProgress > progress {
+				progress = curProgress
+			}
+			print("Progress: ", progress, "% ", link)
 			err := visitLinksCollector.Visit("https://pkg.go.dev/" + link)
 			if err != nil {
 				log.Println(err)
@@ -126,6 +136,9 @@ func main() {
 		return pkgs[i].ImportedBy > pkgs[j].ImportedBy
 	})
 	pkgsJSON, err := json.Marshal(pkgs)
-	os.WriteFile("awesome_go.json", []byte(pkgsJSON), 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	os.WriteFile("public/src/awesome_go.json", []byte(pkgsJSON), 0644)
 
 }

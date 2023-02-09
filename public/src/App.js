@@ -11,7 +11,6 @@ function App() {
       return [key, Math.max(...awesomeGo.map((item) => item[key]))];
     })
   );
-  console.log(max);
 
   const handleSort = (e) => {
     if (e.target.innerText === "Imported By") {
@@ -44,7 +43,14 @@ function App() {
 
   return (
     <div className="App" style={{ padding: 16 }}>
-      <h1>Awesome Go</h1>
+      <h1>Awesome Go Package Rank</h1>
+      <p>
+        This is a table of Go packages with number of imports and GitHub Stars,
+        with reference to{" "}
+        <a href="https://github.com/avelino/awesome-go">avelino/awesome-go</a>,
+        which is a curated list of awesome Go frameworks, libraries and
+        software.
+      </p>
       <div>
         <table
           style={{
@@ -54,6 +60,7 @@ function App() {
         >
           <thead>
             <tr>
+              <th>No.</th>
               {keys.map((key, i) => (
                 <th
                   key={key}
@@ -75,8 +82,9 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {awesomeGo.map((row) => (
+            {awesomeGo.map((row, idx) => (
               <tr key={row.Name}>
+                <td style={{ textAlign: "center" }}>{idx + 1}</td>
                 {keys.map((key, i) => (
                   <td
                     style={{
@@ -85,9 +93,13 @@ function App() {
                       padding: 4,
                       backgroundColor:
                         key === "ImportedBy"
-                          ? `hsl(120,${(row[key] / max[key]) * 100}%,75%)`
+                          ? `hsl(120,${
+                              (Math.log(row[key]) / Math.log(max[key])) * 100
+                            }%,75%)`
                           : key === "GitHubStar"
-                          ? `hsl(240,${(row[key] / max[key]) * 100}%,75%)`
+                          ? `hsl(240,${
+                              (Math.log(row[key]) / Math.log(max[key])) * 100
+                            }%,75%)`
                           : "",
                     }}
                     key={key}
