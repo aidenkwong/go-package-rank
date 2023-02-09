@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/go-package-rank/static/css/main.b552c616.css",
-    "main.js": "/go-package-rank/static/js/main.6b8b6895.js",
+    "main.css": "/go-package-rank/static/css/main.93a0497a.css",
+    "main.js": "/go-package-rank/static/js/main.fb8e6f99.js",
     "index.html": "/go-package-rank/index.html",
-    "main.b552c616.css.map": "/go-package-rank/static/css/main.b552c616.css.map",
-    "main.6b8b6895.js.map": "/go-package-rank/static/js/main.6b8b6895.js.map"
+    "main.93a0497a.css.map": "/go-package-rank/static/css/main.93a0497a.css.map",
+    "main.fb8e6f99.js.map": "/go-package-rank/static/js/main.fb8e6f99.js.map"
   },
   "entrypoints": [
-    "static/css/main.b552c616.css",
-    "static/js/main.6b8b6895.js"
+    "static/css/main.93a0497a.css",
+    "static/js/main.fb8e6f99.js"
   ]
 }
